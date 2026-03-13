@@ -80,6 +80,63 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json(req2);
   });
 
+  // ── Reports ───────────────────────────────────────────────────────────────
+  // GET /api/report/summary — platform-wide snapshot
+  app.get("/api/report/summary", async (_req, res) => {
+    const allStorms = await storage.getStorms();
+    const allRequests = await storage.getRequests();
+    const stats = await storage.getStats();
+
+    // Gather drops for all storms
+    const dropsPerStorm = await Promise.all(
+      allStorms.map(async (s) => ({ stormId: s.id, drops: await storage.getDropsByStorm(s.id) }))
+    );
+    const dropMap = Object.fromEntries(dropsPerStorm.map(({ stormId, drops }) => [stormId, drops]));
+
+    // Category breakdown across all drops
+    const allDrops = dropsPerStorm.flatMap(d => d.drops);
+    const categoryBreakdown: Record<string, number> = {};
+    for (const drop of allDrops) {
+      categoryBreakdown[drop.category] = (categoryBreakdown[drop.category] ?? 0) + 1;
+    }
+
+    res.json({
+      generatedAt: new Date().toISOString(),
+      stats,
+      storms: allStorms.map(s => ({
+        ...s,
+        drops: dropMap[s.id] ?? [],
+        completionPct: s.targetDrops > 0 ? Math.round((s.dropCount / s.targetDrops) * 100) : 0,
+      })),
+      pendingRequests: allRequests.filter(r => r.status === "pending"),
+      categoryBreakdown,
+    });
+  });
+
+  // GET /api/report/storm/:id — per-storm deep report
+  app.get("/api/report/storm/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid id" });
+    const storm = await storage.getStorm(id);
+    if (!storm) return res.status(404).json({ message: "Storm not found" });
+    const drops = await storage.getDropsByStorm(id);
+    const completedDrops = drops.filter(d => d.completed);
+    const pendingDrops = drops.filter(d => !d.completed);
+    const categoryBreakdown: Record<string, number> = {};
+    for (const drop of drops) {
+      categoryBreakdown[drop.category] = (categoryBreakdown[drop.category] ?? 0) + 1;
+    }
+    res.json({
+      generatedAt: new Date().toISOString(),
+      storm,
+      drops,
+      completedDrops,
+      pendingDrops,
+      completionPct: storm.targetDrops > 0 ? Math.round((storm.dropCount / storm.targetDrops) * 100) : 0,
+      categoryBreakdown,
+    });
+  });
+
   // ── Steward Auth ──────────────────────────────────────────────────────────
   // POST /api/steward/verify — accepts { pin: string }, returns { ok: true } or 401
   // The PIN is set via STEWARD_PIN env var (default: "1234" for demo)

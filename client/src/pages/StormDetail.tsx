@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { MapPin, Users, ArrowLeft, CheckCircle, Clock, Zap, Heart, ChevronDown, ChevronUp } from "lucide-react";
+import { MapPin, Users, ArrowLeft, CheckCircle, Clock, Zap, Heart, ChevronDown, ChevronUp, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -124,12 +124,19 @@ export default function StormDetail() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      {/* Back */}
-      <Link href="/storms">
-        <Button variant="ghost" size="sm" className="mb-5 -ml-2 text-muted-foreground gap-1.5" data-testid="button-back">
-          <ArrowLeft size={14} /> All storms
-        </Button>
-      </Link>
+      {/* Back + Report */}
+      <div className="flex items-center justify-between mb-5">
+        <Link href="/storms">
+          <Button variant="ghost" size="sm" className="-ml-2 text-muted-foreground gap-1.5" data-testid="button-back">
+            <ArrowLeft size={14} /> All storms
+          </Button>
+        </Link>
+        <Link href={`/storms/${storm.id}/report`}>
+          <Button variant="outline" size="sm" className="gap-1.5" data-testid="button-view-report">
+            <FileDown size={13} /> View Report
+          </Button>
+        </Link>
+      </div>
 
       {/* Header */}
       <div className="flex flex-wrap items-start gap-3 mb-2">

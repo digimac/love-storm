@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import {
   LayoutDashboard, Zap, ClipboardList, CheckCircle, Users,
-  AlertTriangle, Clock, Plus, Eye, X, ChevronRight
+  AlertTriangle, Clock, Plus, Eye, X, ChevronRight, FileDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -124,14 +124,22 @@ export default function StewardDashboard() {
           </h1>
           <p className="text-sm text-muted-foreground">Manage active storms, review requests, and track impact.</p>
         </div>
-        <Button
-          onClick={() => setShowCreateStorm(true)}
-          className="bg-primary text-primary-foreground gap-2"
-          data-testid="button-create-storm"
-        >
-          <Plus size={15} />
-          New Storm
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link href="/report">
+            <Button variant="outline" className="gap-2" data-testid="button-platform-report">
+              <FileDown size={14} />
+              Export Report
+            </Button>
+          </Link>
+          <Button
+            onClick={() => setShowCreateStorm(true)}
+            className="bg-primary text-primary-foreground gap-2"
+            data-testid="button-create-storm"
+          >
+            <Plus size={15} />
+            New Storm
+          </Button>
+        </div>
       </div>
 
       {/* Stats grid */}

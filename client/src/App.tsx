@@ -13,6 +13,8 @@ import StormFeed from "@/pages/StormFeed";
 import RequestHelp from "@/pages/RequestHelp";
 import StewardDashboard from "@/pages/StewardDashboard";
 import StewardLogin from "@/pages/StewardLogin";
+import StormReport from "@/pages/StormReport";
+import SummaryReport from "@/pages/SummaryReport";
 import NotFound from "@/pages/not-found";
 
 // Guard: redirect to /steward/login unless authenticated
@@ -35,6 +37,8 @@ export default function App() {
               <Route path="/request" component={RequestHelp} />
               <Route path="/steward/login" component={StewardLogin} />
               <Route path="/steward" component={ProtectedStewardRoute} />
+              <Route path="/storms/:id/report" component={StormReport} />
+              <Route path="/report" component={SummaryReport} />
               {/* Default: redirect to home so empty hash still loads */}
               <Route><Redirect to="/" /></Route>
             </Switch>
