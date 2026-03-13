@@ -80,5 +80,17 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json(req2);
   });
 
+  // ── Steward Auth ──────────────────────────────────────────────────────────
+  // POST /api/steward/verify — accepts { pin: string }, returns { ok: true } or 401
+  // The PIN is set via STEWARD_PIN env var (default: "1234" for demo)
+  app.post("/api/steward/verify", (req, res) => {
+    const expected = process.env.STEWARD_PIN ?? "1234";
+    const { pin } = req.body ?? {};
+    if (typeof pin !== "string" || pin.trim() !== expected) {
+      return res.status(401).json({ message: "Incorrect PIN" });
+    }
+    res.json({ ok: true });
+  });
+
   return httpServer;
 }

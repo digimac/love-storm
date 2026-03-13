@@ -1,19 +1,20 @@
 import { Link, useLocation } from "wouter";
 import { useHashLocation } from "wouter/use-hash-location";
 import { useTheme } from "@/components/ThemeProvider";
-import { Sun, Moon, Zap, Heart, LayoutDashboard, HelpCircle, Home } from "lucide-react";
+import { Sun, Moon, Zap, Heart, LayoutDashboard, HelpCircle, Home, Lock, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PerplexityAttribution from "@/components/PerplexityAttribution";
+import { useAuth } from "@/contexts/AuthContext";
 
-const navItems = [
+const publicNavItems = [
   { href: "/", label: "Home", icon: Home },
   { href: "/storms", label: "Active Storms", icon: Zap },
   { href: "/request", label: "Request Help", icon: HelpCircle },
-  { href: "/steward", label: "Steward View", icon: LayoutDashboard },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { theme, toggle } = useTheme();
+  const { isSteward, logout } = useAuth();
   const [location] = useLocation(useHashLocation);
 
   return (
@@ -35,7 +36,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
           {/* Nav */}
           <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
-            {navItems.map(({ href, label, icon: Icon }) => {
+            {publicNavItems.map(({ href, label, icon: Icon }) => {
               const active = location === href;
               return (
                 <Link key={href} href={href}>
@@ -50,6 +51,42 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
+            {/* Steward nav — lock icon when logged out, dashboard when logged in */}
+            {isSteward ? (
+              <>
+                <Link href="/steward">
+                  <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                    location === "/steward"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}>
+                    <LayoutDashboard size={14} />
+                    Steward
+                  </span>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={logout}
+                  className="h-8 px-2 text-muted-foreground hover:text-foreground"
+                  data-testid="button-steward-logout"
+                  title="Sign out of Steward view"
+                >
+                  <LogOut size={14} />
+                </Button>
+              </>
+            ) : (
+              <Link href="/steward/login">
+                <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                  location === "/steward/login"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}>
+                  <Lock size={14} />
+                  Steward
+                </span>
+              </Link>
+            )}
           </nav>
 
           {/* Theme toggle */}
@@ -67,7 +104,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         {/* Mobile nav */}
         <nav className="md:hidden border-t border-border flex" aria-label="Mobile navigation">
-          {navItems.map(({ href, label, icon: Icon }) => {
+          {publicNavItems.map(({ href, label, icon: Icon }) => {
             const active = location === href;
             return (
               <Link key={href} href={href} className="flex-1">
@@ -80,6 +117,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Link>
             );
           })}
+          {/* Steward mobile nav */}
+          {isSteward ? (
+            <Link href="/steward" className="flex-1">
+              <span className={`flex flex-col items-center gap-0.5 py-2 text-xs font-medium transition-colors cursor-pointer ${
+                location === "/steward" ? "text-primary" : "text-muted-foreground"
+              }`}>
+                <LayoutDashboard size={16} />
+                Steward
+              </span>
+            </Link>
+          ) : (
+            <Link href="/steward/login" className="flex-1">
+              <span className={`flex flex-col items-center gap-0.5 py-2 text-xs font-medium transition-colors cursor-pointer ${
+                location === "/steward/login" ? "text-primary" : "text-muted-foreground"
+              }`}>
+                <Lock size={16} />
+                Steward
+              </span>
+            </Link>
+          )}
         </nav>
       </header>
 
