@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Love Storm palette — warm golden-amber surfaces, deep indigo-navy primary, coral accent */
+    /* Background surfaces: warm off-white, cream, soft sand */
+    --background: 40 28% 97%;
+    --foreground: 222 32% 12%;
+
+    --card: 38 26% 98%;
+    --card-foreground: 222 32% 12%;
+
+    --popover: 38 26% 98%;
+    --popover-foreground: 222 32% 12%;
+
+    /* Primary: Deep storm navy / indigo */
+    --primary: 226 52% 24%;
+    --primary-foreground: 40 28% 97%;
+
+    /* Secondary: Warm amber-sand surface */
+    --secondary: 38 30% 93%;
+    --secondary-foreground: 222 32% 20%;
+
+    /* Muted surfaces */
+    --muted: 36 20% 94%;
+    --muted-foreground: 220 10% 48%;
+
+    /* Accent: Warm coral-rose — the "love" color */
+    --accent: 15 75% 56%;
+    --accent-foreground: 40 28% 97%;
+
+    --destructive: 0 68% 50%;
+    --destructive-foreground: 40 28% 97%;
+
+    --border: 36 15% 87%;
+    --input: 36 15% 87%;
+    --ring: 226 52% 24%;
+
+    --radius: 0.5rem;
+
+    /* Storm-specific semantic colors */
+    --storm-critical: 0 72% 55%;
+    --storm-high: 25 85% 52%;
+    --storm-medium: 43 86% 50%;
+    --storm-low: 152 52% 44%;
+
+    --storm-active: 226 52% 24%;
+    --storm-completed: 152 52% 44%;
+    --storm-reviewing: 43 86% 42%;
+  }
+
+  .dark {
+    --background: 226 30% 9%;
+    --foreground: 40 20% 90%;
+
+    --card: 226 28% 11%;
+    --card-foreground: 40 20% 90%;
+
+    --popover: 226 28% 11%;
+    --popover-foreground: 40 20% 90%;
+
+    --primary: 38 70% 62%;
+    --primary-foreground: 226 30% 9%;
+
+    --secondary: 226 22% 18%;
+    --secondary-foreground: 40 20% 85%;
+
+    --muted: 226 20% 16%;
+    --muted-foreground: 220 10% 58%;
+
+    --accent: 15 70% 60%;
+    --accent-foreground: 226 30% 9%;
+
+    --destructive: 0 62% 56%;
+    --destructive-foreground: 40 20% 90%;
+
+    --border: 226 18% 22%;
+    --input: 226 18% 22%;
+    --ring: 38 70% 62%;
+  }
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    scroll-padding-top: 4rem;
+  }
+
+  body {
+    min-height: 100dvh;
+    line-height: 1.6;
+    font-family: 'General Sans', 'Helvetica Neue', sans-serif;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cabinet Grotesk', 'Helvetica Neue', sans-serif;
+    text-wrap: balance;
+    line-height: 1.15;
+  }
+
+  p, li { text-wrap: pretty; }
+
+  img, picture, video, canvas, svg { display: block; max-width: 100%; height: auto; }
+  input, button, textarea, select { font: inherit; color: inherit; }
+  button { cursor: pointer; background: none; border: none; }
+  table { border-collapse: collapse; width: 100%; }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ── Custom Components ────────────────────────────────────────────────────── */
+
+.storm-card {
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.storm-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px hsl(var(--foreground) / 0.08);
+}
+
+.progress-bar-fill {
+  transition: width 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drop-item {
+  animation: slideIn 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.urgency-critical { color: hsl(var(--storm-critical)); }
+.urgency-high     { color: hsl(var(--storm-high)); }
+.urgency-medium   { color: hsl(var(--storm-medium)); }
+.urgency-low      { color: hsl(var(--storm-low)); }
+
+.urgency-bg-critical { background-color: hsl(var(--storm-critical) / 0.1); }
+.urgency-bg-high     { background-color: hsl(var(--storm-high) / 0.1); }
+.urgency-bg-medium   { background-color: hsl(var(--storm-medium) / 0.1); }
+.urgency-bg-low      { background-color: hsl(var(--storm-low) / 0.1); }
+
+.status-active     { color: hsl(var(--storm-active)); }
+.status-completed  { color: hsl(var(--storm-completed)); }
+.status-reviewing  { color: hsl(var(--storm-reviewing)); }
+
+/* Lightning bolt pulse for active storms */
+@keyframes stormPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.storm-pulse {
+  animation: stormPulse 2.4s ease-in-out infinite;
+}
